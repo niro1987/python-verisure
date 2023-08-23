@@ -16,6 +16,7 @@ from .session import ( # NOQA
     VariableTypes,
     ResponseError,
     Session,
+    EVENTCATEGORIES
 )
 
 ALARM_ARMED_HOME = 'ARMED_HOME'

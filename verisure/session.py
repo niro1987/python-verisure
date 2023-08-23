@@ -10,6 +10,24 @@ import pickle
 import requests
 
 LOGGER = logging.getLogger(__package__)
+EVENTCATEGORIES = [
+    "INTRUSION", 
+    "FIRE", 
+    "SOS", 
+    "WATER", 
+    "ANIMAL", 
+    "TECHNICAL", 
+    "WARNING", 
+    "ARM", 
+    "DISARM", 
+    "LOCK", 
+    "UNLOCK", 
+    "PICTURE", 
+    "CLIMATE", 
+    "CAMERA_SETTINGS", 
+    "DOORWINDOW_STATE_OPENED", 
+    "DOORWINDOW_STATE_CLOSED",
+]
 
 
 class Error(Exception):
@@ -64,6 +82,15 @@ class VariableTypes:
 
     class Giid(str):
         """Giid"""
+
+    class EventCategory(str):
+        """Event Category"""
+
+    class PageSize(int):
+        """Page size"""
+
+    class Offset(int):
+        """Offset"""
 
 
 class Session(object):
@@ -468,6 +495,9 @@ class Session(object):
 
     @query_func
     def event_log(self,
+                  event_category: VariableTypes.EventCategory = "ALL",
+                  pagesize: VariableTypes.PageSize=15,
+                  offset: VariableTypes.Offset=0,
                   giid: VariableTypes.Giid=None):
         """Read event log"""
         assert giid or self._giid, "Set default giid or pass explicit"
@@ -475,9 +505,9 @@ class Session(object):
             "operationName": "EventLog",
             "variables": {
                 "giid": giid or self._giid,
-                "offset": 0,
-                "pagesize": 15,
-                "eventCategories": ["INTRUSION", "FIRE", "SOS", "WATER", "ANIMAL", "TECHNICAL", "WARNING", "ARM", "DISARM", "LOCK", "UNLOCK", "PICTURE", "CLIMATE", "CAMERA_SETTINGS"],  # noqa: E501
+                "offset": offset,
+                "pagesize": pagesize,
+                "eventCategories": EVENTCATEGORIES if event_category == "ALL" else [event_category],  # noqa: E501
                 "eventContactIds": [],
                 "eventDeviceLabels": [],
                 "fromDate": None,

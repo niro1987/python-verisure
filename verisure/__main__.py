@@ -4,7 +4,7 @@ import inspect
 import json
 import re
 import click
-from verisure import VariableTypes, Session, ResponseError, LoginError
+from verisure import VariableTypes, Session, ResponseError, LoginError, EVENTCATEGORIES
 
 
 class DeviceLabel(click.ParamType):
@@ -47,6 +47,24 @@ class Code(click.ParamType):
         self.fail(f"{value!r} is not a code", param, ctx)
 
 
+class EventCategory(click.Choice):
+    """Click param for EventCategory"""
+    name = "EventCategory"
+
+    def __init__(self) -> None:
+        self.choices = ["ALL"] + EVENTCATEGORIES
+        self.case_sensitive = False
+
+class PageSize(click.IntRange):
+    """Click param for pagesize"""
+    name = "PageSize"
+
+
+class Offset(click.IntRange):
+    """Click param for offset"""
+    name = "Offset"
+
+
 VariableTypeMap = {
     VariableTypes.DeviceLabel: DeviceLabel(),
     VariableTypes.ArmFutureState: ArmFutureState(),
@@ -55,6 +73,9 @@ VariableTypeMap = {
     VariableTypes.TransactionId: TransactionId(),
     VariableTypes.RequestId: RequestId(),
     VariableTypes.Code: Code(),
+    VariableTypes.EventCategory: EventCategory(),
+    VariableTypes.PageSize: PageSize(min=1, max=100),
+    VariableTypes.Offset: Offset(min=0),
 }
 
 
